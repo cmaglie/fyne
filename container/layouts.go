@@ -97,3 +97,11 @@ func NewPadded(objects ...fyne.CanvasObject) *fyne.Container {
 func NewVBox(objects ...fyne.CanvasObject) *fyne.Container {
 	return fyne.NewContainerWithLayout(layout.NewVBoxLayout(), objects...)
 }
+
+// NewWeightedGridWithRows creates a new container with the specified and
+// weighted grid laytout.
+//
+// Since: cm
+func NewWeightedGridWithRows(rows []int, objects ...fyne.CanvasObject) *fyne.Container {
+	return fyne.NewContainerWithLayout(layout.NewWeightedGridLayoutWithRows(rows), objects...)
+}
