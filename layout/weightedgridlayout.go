@@ -70,7 +70,7 @@ func (g *weightedGridLayout) countRows(objects []fyne.CanvasObject) int {
 // of columns specified in our constructor.
 func (g *weightedGridLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
 	rows := g.countRows(objects)
-
+	fmt.Println("SIZE", size)
 	padWidth := float32(g.TotalCols-1) * theme.Padding()
 	padHeight := float32(rows-1) * theme.Padding()
 	cellWidth := float64(size.Width-padWidth) / float64(g.TotalCols)
@@ -98,8 +98,8 @@ func (g *weightedGridLayout) Layout(objects []fyne.CanvasObject, size fyne.Size)
 		}
 		x1 := getLeading(cellWidth, col)
 		y1 := getLeading(cellHeight, row)
-		x2 := getTrailing(cellWidth, col*colSpan)
-		y2 := getTrailing(cellHeight, row*rowSpan)
+		x2 := getTrailing(cellWidth, col+colSpan-1)
+		y2 := getTrailing(cellHeight, row+rowSpan-1)
 		fmt.Println(x1, y1, "-", x2, y2)
 		child.Move(fyne.NewPos(x1, y1))
 		child.Resize(fyne.NewSize(x2-x1, y2-y1))
@@ -133,14 +133,14 @@ func (g *weightedGridLayout) Layout(objects []fyne.CanvasObject, size fyne.Size)
 func (g *weightedGridLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {
 	rows := g.countRows(objects)
 	minSize := fyne.NewSize(0, 0)
-	for _, child := range objects {
+	for i, child := range objects {
 		if !child.Visible() {
 			continue
 		}
-
-		minSize = minSize.Max(child.MinSize())
+		childMinSize := child.MinSize()
+		childMinSize.Height /= float32(g.Cols[i])
+		minSize = minSize.Max(childMinSize)
 	}
-
 	if g.horizontal() {
 		minContentSize := fyne.NewSize(minSize.Width*float32(g.TotalCols), minSize.Height*float32(rows))
 		return minContentSize.Add(fyne.NewSize(theme.Padding()*fyne.Max(float32(g.TotalCols-1), 0), theme.Padding()*fyne.Max(float32(rows-1), 0)))
